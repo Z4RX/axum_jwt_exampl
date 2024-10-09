@@ -1,7 +1,9 @@
 use axum::{
     async_trait,
-    extract::{Extension, FromRequest, RequestParts, TypedHeader},
+    extract::{Extension, FromRequestParts},
+	http::request::Parts,
 };
+use axum_extra::typed_header::TypedHeader;
 use headers::{authorization::Bearer, Authorization};
 use sqlx::PgPool;
 
@@ -12,18 +14,20 @@ use crate::{
 };
 
 #[async_trait]
-impl<B> FromRequest<B> for User
+impl<S> FromRequestParts<S> for User
 where
-    B: Send,
+    S: Send + Sync,
 {
     type Rejection = ApiError;
 
-    async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
+    async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
         let TypedHeader(Authorization(bearer)) =
-            TypedHeader::<Authorization<Bearer>>::from_request(req)
+            TypedHeader::<Authorization<Bearer>>::from_request_parts(parts, state)
                 .await
                 .map_err(|err| Error::from(err))?;
-        let Extension(pool) = Extension::<PgPool>::from_request(req)
+
+		use axum::RequestPartsExt;
+        let Extension(pool) = parts.extract::<Extension::<PgPool>>()
             .await
             .map_err(|err| Error::from(err))?;
         let claims = jwt::verify(bearer.token())?;

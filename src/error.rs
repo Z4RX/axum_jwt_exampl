@@ -13,7 +13,7 @@ pub enum Error {
     #[error(transparent)]
     TokioRecvError(#[from] tokio::sync::oneshot::error::RecvError),
     #[error(transparent)]
-    AxumTypedHeaderError(#[from] axum::extract::rejection::TypedHeaderRejection),
+    AxumTypedHeaderError(#[from] axum_extra::typed_header::TypedHeaderRejection),
     #[error(transparent)]
     AxumExtensionError(#[from] axum::extract::rejection::ExtensionRejection),
     #[error(transparent)]

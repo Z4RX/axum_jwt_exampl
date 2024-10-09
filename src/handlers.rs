@@ -1,10 +1,10 @@
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 use axum::{
-    extract::Extension,
+    extract::{Extension, State},
     http::StatusCode,
     response::{Html, IntoResponse},
-    Json,
+    Json, debug_handler,
 };
 use sqlx::PgPool;
 
@@ -22,9 +22,10 @@ pub async fn authorize(user: User) -> Json<User> {
     Json(user)
 }
 
+#[debug_handler]
 pub async fn login(
+	Extension(pool): Extension<PgPool>,
     Json(input): Json<LoginInput>,
-    Extension(pool): Extension<PgPool>,
 ) -> ApiResult<Json<TokenPayload>> {
     validate_payload(&input)?;
     let user = AuthService::sign_in(input, &pool)
@@ -37,9 +38,10 @@ pub async fn login(
     }))
 }
 
+#[debug_handler]
 pub async fn register(
+	Extension(pool): Extension<PgPool>,
     Json(input): Json<RegisterInput>,
-    Extension(pool): Extension<PgPool>,
 ) -> ApiResult<(StatusCode, Json<TokenPayload>)> {
     validate_payload(&input)?;
     let user = AuthService::sign_up(input, &pool).await?;
@@ -57,6 +59,7 @@ pub async fn graphql_playground() -> impl IntoResponse {
     Html(playground_source(GraphQLPlaygroundConfig::new("/graphql")))
 }
 
+#[debug_handler]
 pub async fn graphql(
     schema: Extension<AppSchema>,
     req: GraphQLRequest,
