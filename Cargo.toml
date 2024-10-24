@@ -2,35 +2,36 @@
 name = "axum_jwt_example"
 version = "0.1.0"
 authors = ["Andrei Zolkin <iamz4rx@gmail.com>"]
-edition = "2018"
+edition = "2021"
 license = "MIT"
 
 [dependencies]
-async-graphql = { version = "3", features = ["chrono", "uuid"] }
-async-graphql-axum = "3"
-axum = { version = "0.4", features = ["headers"] }
-bcrypt = "0.10"
+async-graphql = { version = "7.0", features = ["chrono", "uuid"] }
+async-graphql-axum = "7.0"
+axum =  { version = "0.7.7", features = [ "macros" ] }
+axum-extra = { version = "0.9.4", features = ["typed-header"] }
+bcrypt = "0.15"
 chrono = { version = "0.4", features = ["serde"] }
-clap = { version = "3.0.0-rc.4", features = ["derive", "env"] }
+clap = { version = "4.5", features = ["derive", "env"] }
 dotenv = "0.15"
-headers = "0.3"
-jsonwebtoken = "7.2"
-lazy_static = "1.4"
-rayon = "1.5"
+headers = "0.4"
+jsonwebtoken = "9.3"
+lazy_static = "1.5"
+rayon = "1.10"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-sqlx = { version = "0.5", features = [
+sqlx = { version = "0.8", features = [
     "runtime-tokio-rustls",
     "postgres",
     "macros",
     "chrono",
     "uuid",
 ] }
-thiserror = "1"
+thiserror = "1.0"
 tokio = { version = "1", features = ["full"] }
-tower = { version = "0.4", features = ["full"] }
-tower-http = { version = "0.2", features = ["full"] }
+tower = { version = "0.5", features = ["full"] }
+tower-http = { version = "0.6", features = ["full"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-uuid = { version = "0.8", features = ["serde", "v4"] }
-validator = { version = "0.14", features = ["derive"] }
+uuid = { version = "1", features = ["serde", "v4"] }
+validator = { version = "0.18", features = ["derive"] }

@@ -1,8 +1,7 @@
 use std::net::SocketAddr;
-
-use axum_jwt_example::config;
 use clap::Parser;
 use tracing_subscriber::EnvFilter;
+use axum_jwt_example::{config, app};
 
 #[tokio::main]
 async fn main() {
@@ -18,10 +17,11 @@ async fn main() {
     let config = config::env::ServerConfig::parse();
     let addr = SocketAddr::from((config.host, config.port));
     tracing::debug!("listening on {}", addr);
-    let server =
-        axum::Server::bind(&addr).serve(axum_jwt_example::app(pg_pool).into_make_service());
-
-    if let Err(err) = server.await {
+    
+    let app = app(pg_pool);
+    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    
+    if let Err(err) = axum::serve(listener, app).await {
         tracing::error!("server error: {:?}", err);
     }
 }
