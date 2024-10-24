@@ -1,7 +1,7 @@
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 use axum::{
-    extract::{Extension, State},
+    extract::Extension,
     http::StatusCode,
     response::{Html, IntoResponse},
     Json, debug_handler,
@@ -62,8 +62,8 @@ pub async fn graphql_playground() -> impl IntoResponse {
 #[debug_handler]
 pub async fn graphql(
     schema: Extension<AppSchema>,
-    req: GraphQLRequest,
     user: Option<User>,
+    req: GraphQLRequest,
 ) -> GraphQLResponse {
     schema.execute(req.into_inner().data(user)).await.into()
 }
